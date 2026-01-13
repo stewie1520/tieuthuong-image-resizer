@@ -1,7 +1,9 @@
 use aws_sdk_s3::Client;
-use aws_config;
+use aws_config::{self, Region};
+use aws_credential_types::Credentials;
 use bytes::Bytes;
 use url::Url;
+use std::env;
 
 use crate::error::AppError;
 
@@ -11,7 +13,27 @@ pub struct S3Client {
 
 impl S3Client {
     pub async fn new() -> Self {
-        let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
+        let access_key = env::var("TT_AWS_ACCESS_KEY_ID")
+            .expect("TT_AWS_ACCESS_KEY_ID must be set");
+        let secret_key = env::var("TT_AWS_SECRET_ACCESS_KEY")
+            .expect("TT_AWS_SECRET_ACCESS_KEY must be set");
+        let region = env::var("TT_AWS_REGION")
+            .unwrap_or_else(|_| "us-east-1".to_string());
+
+        let credentials = Credentials::new(
+            access_key,
+            secret_key,
+            None,
+            None,
+            "custom-env",
+        );
+
+        let config = aws_config::defaults(aws_config::BehaviorVersion::latest())
+            .region(Region::new(region))
+            .credentials_provider(credentials)
+            .load()
+            .await;
+
         let client = Client::new(&config);
         Self { client }
     }

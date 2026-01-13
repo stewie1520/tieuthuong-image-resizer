@@ -36,12 +36,12 @@ A high-performance Rust service for resizing images stored in AWS S3. The servic
    
    Set environment variables:
    ```bash
-   export AWS_ACCESS_KEY_ID=your_access_key
-   export AWS_SECRET_ACCESS_KEY=your_secret_key
-   export AWS_REGION=us-east-1
+   export TT_AWS_ACCESS_KEY_ID=your_access_key
+   export TT_AWS_SECRET_ACCESS_KEY=your_secret_key
+   export TT_AWS_REGION=us-east-1
    ```
    
-   Or use AWS credentials file (`~/.aws/credentials`)
+   **Note**: The service uses `TT_` prefixed environment variables instead of standard AWS variable names to support CI environments that restrict variables starting with `AWS_`.
 
 3. **Build the project**
    ```bash
